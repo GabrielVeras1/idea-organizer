@@ -4,7 +4,12 @@ function IdeaCard({ idea }) {
   return (
     <article className={styles.card}>
       <div className={styles.metaRow}>
-        <span className={styles.categoryTag}>{idea.category}</span>
+        <div className={styles.tagGroup}>
+          <span className={styles.categoryTag}>{idea.category}</span>
+          {idea.isSample ? (
+            <span className={styles.sampleTag}>Sample</span>
+          ) : null}
+        </div>
         <span className={styles.date}>{idea.createdAt}</span>
       </div>
 

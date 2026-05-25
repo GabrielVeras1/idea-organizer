@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainContent from "./components/MainContent/MainContent";
 import NewIdeaView from "./components/NewIdeaView/NewIdeaView";
 import Sidebar from "./components/Sidebar/Sidebar";
+import { loadIdeas, saveIdeas } from "./utils/ideaStorage";
 import styles from "./App.module.css";
 
 const categories = ["Video/Edit", "Coding", "Social Media"];
 
-const initialIdeas = [
+const sampleIdeas = [
   {
-    id: "idea-1",
+    id: "sample-idea-1",
     title: "Creator workflow dashboard",
     description:
       "A focused workspace for planning edit batches, collecting raw concepts, and tracking which experiments are ready to publish.",
@@ -16,9 +17,10 @@ const initialIdeas = [
       "Inspired by calm browser sidebars, creative studio boards, and the feeling of moving through projects without clutter.",
     category: "Video/Edit",
     createdAt: "2026-04-08",
+    isSample: true,
   },
   {
-    id: "idea-2",
+    id: "sample-idea-2",
     title: "Prompt playground for app concepts",
     description:
       "A simple surface for testing product prompts, saving useful outputs, and turning rough sparks into clearer software ideas.",
@@ -26,9 +28,10 @@ const initialIdeas = [
       "Notebook margins, sticky notes on a monitor, and the quick iteration feel of prototyping in small loops.",
     category: "Coding",
     createdAt: "2026-04-07",
+    isSample: true,
   },
   {
-    id: "idea-3",
+    id: "sample-idea-3",
     title: "Series concept bank",
     description:
       "A place to collect recurring themes, opening hooks, and repeatable content formats for short-form social posts.",
@@ -36,9 +39,10 @@ const initialIdeas = [
       "Moodboards, creator calendars, and those moments when one good angle could become a whole series.",
     category: "Social Media",
     createdAt: "2026-04-06",
+    isSample: true,
   },
   {
-    id: "idea-4",
+    id: "sample-idea-4",
     title: "Editing style experiments",
     description:
       "Capture transitions, pacing notes, and visual rhythm ideas for future edits without losing them in scattered notes.",
@@ -46,6 +50,7 @@ const initialIdeas = [
       "Fast cuts paired with clean interfaces that still feel soft, premium, and easy to scan.",
     category: "Video/Edit",
     createdAt: "2026-04-05",
+    isSample: true,
   },
 ];
 
@@ -56,9 +61,16 @@ function App() {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftDescription, setDraftDescription] = useState("");
   const [draftInspiration, setDraftInspiration] = useState("");
-  const [ideas, setIdeas] = useState(initialIdeas);
+  const [ideas, setIdeas] = useState(() => loadIdeas());
 
-  const visibleIdeas = ideas.filter((idea) => idea.category === activeCategory);
+  useEffect(() => {
+    saveIdeas(ideas);
+  }, [ideas]);
+
+  const displayIdeas = ideas.length > 0 ? ideas : sampleIdeas;
+  const visibleIdeas = displayIdeas.filter(
+    (idea) => idea.category === activeCategory,
+  );
   const highlightedCategory =
     currentView === "create" ? draftCategory : activeCategory;
 
