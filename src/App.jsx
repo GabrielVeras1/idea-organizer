@@ -6,7 +6,7 @@ import styles from "./App.module.css";
 
 const categories = ["Video/Edit", "Coding", "Social Media"];
 
-const ideas = [
+const initialIdeas = [
   {
     id: "idea-1",
     title: "Creator workflow dashboard",
@@ -53,6 +53,10 @@ function App() {
   const [currentView, setCurrentView] = useState("browse");
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const [draftCategory, setDraftCategory] = useState(categories[0]);
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftDescription, setDraftDescription] = useState("");
+  const [draftInspiration, setDraftInspiration] = useState("");
+  const [ideas, setIdeas] = useState(initialIdeas);
 
   const visibleIdeas = ideas.filter((idea) => idea.category === activeCategory);
   const highlightedCategory =
@@ -68,15 +72,38 @@ function App() {
   };
 
   const handleCreateIdea = () => {
+    setDraftTitle("");
+    setDraftDescription("");
+    setDraftInspiration("");
     setDraftCategory(activeCategory);
     setCurrentView("create");
   };
 
   const handleCancelCreate = () => {
+    setDraftTitle("");
+    setDraftDescription("");
+    setDraftInspiration("");
     setCurrentView("browse");
   };
 
-  const handleSaveIdea = () => {};
+  const handleSaveIdea = (draftIdea) => {
+    const savedIdea = {
+      id: `idea-${Date.now()}`,
+      title: draftIdea.title,
+      description: draftIdea.description,
+      inspiration: draftIdea.inspiration,
+      category: draftIdea.category,
+      createdAt: new Date().toISOString().slice(0, 10),
+    };
+
+    setIdeas((currentIdeas) => [...currentIdeas, savedIdea]);
+    setActiveCategory(savedIdea.category);
+    setDraftTitle("");
+    setDraftDescription("");
+    setDraftInspiration("");
+    setDraftCategory(savedIdea.category);
+    setCurrentView("browse");
+  };
 
   return (
     <div className={styles.appShell}>
@@ -91,7 +118,13 @@ function App() {
         {currentView === "create" ? (
           <NewIdeaView
             categories={categories}
+            title={draftTitle}
+            description={draftDescription}
+            inspiration={draftInspiration}
             selectedCategory={draftCategory}
+            onTitleChange={setDraftTitle}
+            onDescriptionChange={setDraftDescription}
+            onInspirationChange={setDraftInspiration}
             onCategoryChange={setDraftCategory}
             onCancel={handleCancelCreate}
             onSave={handleSaveIdea}
